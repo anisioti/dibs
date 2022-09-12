@@ -1,3 +1,5 @@
+import sys  
+sys.path.insert(0, '../../')
 import igraph as ig
 import random as pyrandom
 import jax.numpy as jnp
