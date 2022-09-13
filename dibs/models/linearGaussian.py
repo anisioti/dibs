@@ -269,7 +269,8 @@ class LinearGaussian:
             Parameters ``theta`` of shape ``[batch_size, n_particles, n_vars, n_vars]``, dropping dimensions equal to 0
         """
         shape = (batch_size, n_particles, *self.get_theta_shape(n_vars=n_vars))
-        theta = self.mean_edge + self.sig_edge * random.normal(key, shape=tuple(d for d in shape if d != 0))
+        theta = self.mean_edge + self.sig_edge * random.normal(key, shape=tuple(d for d in shape if d != 0)) #keeps only the dimensions that are not zero!
+        #returns an array
         theta += jnp.sign(theta) * self.min_edge
         return theta
 
@@ -290,15 +291,16 @@ class LinearGaussian:
         if interv is None:
             interv = {}
         if toporder is None:
-            toporder = g.topological_sorting()
+            toporder = g.topological_sorting() #list: #give a topological ordering on the DAG (always exists at least one since we have a DAG)
+            #a topological sort is a graph traversal in which each node v is visited only after all its dependencies are visited.
 
-        x = jnp.zeros((n_samples, len(g.vs)))
+        x = jnp.zeros((n_samples, len(g.vs))) #array with shape (n_samples,20)
 
         key, subk = random.split(key)
-        z = jnp.sqrt(self.obs_noise) * random.normal(subk, shape=(n_samples, len(g.vs)))
+        z = jnp.sqrt(self.obs_noise) * random.normal(subk, shape=(n_samples, len(g.vs))) #obs_noise is the noise variance, random.normal gives N(0,1)
 
         # ancestral sampling
-        for j in toporder:
+        for j in toporder: #have nodels according to their topological ordering
 
             # intervention
             if j in interv.keys():
@@ -306,12 +308,12 @@ class LinearGaussian:
                 continue
 
             # regular ancestral sampling
-            parent_edges = g.incident(j, mode='in')
-            parents = list(g.es[e].source for e in parent_edges)
+            parent_edges = g.incident(j, mode='in') # id of incoming edge to the specified node
+            parents = list(g.es[e].source for e in parent_edges) #source node for the incoming edges (actually the parent)
 
-            if parents:
-                mean = x[:, jnp.array(parents)] @ theta[jnp.array(parents), j]
-                x = x.at[index[:, j]].set(mean + z[:, j])
+            if parents: #it can be the case that there are no parents, then the list is going to be empty, move forward
+                mean = x[:, jnp.array(parents)] @ theta[jnp.array(parents), j] # @ is matrix multiplication 
+                x = x.at[index[:, j]].set(mean + z[:, j]) #not sure about this mean in the sum , it seems to be always zero. 
 
             else:
                 x = x.at[index[:, j]].set(z[:, j])
