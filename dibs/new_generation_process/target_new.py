@@ -96,7 +96,7 @@ def make_synthetic_bayes_net(*,
         n_vars=n_vars,
         n_observations=n_observations,
         g=g_gt_mat,
-        theta=theta,
+        theta=thetas,
         x=observations)
     
     return data
