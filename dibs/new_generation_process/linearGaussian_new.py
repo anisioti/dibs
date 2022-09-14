@@ -53,13 +53,12 @@ class LinearGaussian:
         return jnp.array((n_vars, n_vars))
 
 
-    def sample_parameters(self, *, key, n_vars, n_obs ,n_particles=0, batch_size=0):
+    def sample_parameters(self, *, key, n_vars,n_particles=0, batch_size=0):
         """Samples batch of random parameters given dimensions of graph from :math:`p(\\Theta | G)`
 
         Args:
             key (ndarray): rng
             n_vars (int): number of variables in BN
-            n_obs (int): number of observations we want to sample
             n_particles (int): number of parameter particles sampled
             batch_size (int): number of batches of particles being sampled
 
@@ -77,7 +76,7 @@ class LinearGaussian:
         """Samples ``n_samples`` observations given graph ``g`` and parameters ``theta``
 
         Args:
-            key (ndarray): rng
+            key (ndarray): rng -> this is the initial key, we will use it as a seed for creating the first random split
             n_samples (int): number of samples
             g (igraph.Graph): graph
             theta (Any): parameters
