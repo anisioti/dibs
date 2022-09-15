@@ -80,6 +80,7 @@ def make_synthetic_bayes_net(*,
     ## step2 -3 : generate parameters, instead of sampling once and keeping the same parameter sample for all the observations we want to create 
     ## we will sample one parameter sample for each sample that we want to create.
     ## on the final step then we will 
+    ## see this link for another way to use the random keys : https://jax.readthedocs.io/en/latest/jax-101/05-random-numbers.html
 
     observations = jnp.array(object= jnp.empty(shape=(0,20)))
     thetas = []
