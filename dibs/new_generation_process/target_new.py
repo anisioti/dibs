@@ -82,11 +82,11 @@ def make_synthetic_bayes_net(*,
     ## on the final step then we will 
     ## see this link for another way to use the random keys : https://jax.readthedocs.io/en/latest/jax-101/05-random-numbers.html
 
-    observations = jnp.array(object= jnp.empty(shape=(0,20)))
+    observations = jnp.array(object= jnp.empty(shape=(0,n_vars)))
     thetas = []
     for i in range(n_observations):
         key, subk = random.split(key)
-        theta = generative_model.sample_parameters(key=subk, n_vars = 20)
+        theta = generative_model.sample_parameters(key=subk, n_vars = n_vars)
         thetas.append(theta)
         observation = generative_model.sample_obs(key=subk, n_samples = 1, g = g_gt, theta = theta)
         observations = jnp.append(observations, values= observation, axis=0)
