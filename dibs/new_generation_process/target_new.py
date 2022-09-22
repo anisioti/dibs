@@ -88,6 +88,7 @@ def make_synthetic_bayes_net(*,
         key, subk = random.split(key)
         theta = generative_model.sample_parameters(key=subk, n_vars = n_vars)
         thetas.append(theta)
+        key, subk = random.split(key)
         observation = generative_model.sample_obs(key=subk, n_samples = 1, g = g_gt, theta = theta)
         observations = jnp.append(observations, values= observation, axis=0)
 
