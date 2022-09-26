@@ -72,7 +72,7 @@ class LinearGaussian:
         return theta
 
 
-    def sample_obs(self, *, key, n_samples, g, theta, toporder=None, interv=None):
+    def sample_obs(self, *, key, n_samples, g, theta, toporder=None, interv=None, mean_distr = 0):
         """Samples ``n_samples`` observations given graph ``g`` and parameters ``theta``
 
         Args:
@@ -94,7 +94,7 @@ class LinearGaussian:
         x = jnp.zeros((n_samples, len(g.vs))) #array with shape (n_samples,20)
 
         key, subk = random.split(key)
-        z = jnp.sqrt(self.obs_noise) * random.normal(subk, shape=(n_samples, len(g.vs))) #obs_noise is the noise variance, random.normal gives N(0,1)
+        z = mean_distr + jnp.sqrt(self.obs_noise) * random.normal(subk, shape=(n_samples, len(g.vs))) #obs_noise is the noise variance, random.normal gives N(0,1)
 
         # ancestral sampling
         for j in toporder: #have nodels according to their topological ordering

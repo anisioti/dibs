@@ -43,7 +43,8 @@ def make_synthetic_bayes_net(*,
     n_vars,
     graph_dist,
     generative_model,
-    n_observations=100
+    n_observations=100,
+    mean_distr = 0
 ):
     """
     Returns an instance of :class:`~dibs.metrics.Target` for evaluation of a method on
@@ -89,7 +90,7 @@ def make_synthetic_bayes_net(*,
         theta = generative_model.sample_parameters(key=subk, n_vars = n_vars)
         thetas.append(theta)
         key, subk = random.split(key)
-        observation = generative_model.sample_obs(key=subk, n_samples = 1, g = g_gt, theta = theta)
+        observation = generative_model.sample_obs(key=subk, n_samples = 1, g = g_gt, theta = theta, mean_distr = mean_distr)
         observations = jnp.append(observations, values= observation, axis=0)
 
     # return and save generated target object
@@ -134,7 +135,7 @@ def make_graph_model(*, n_vars, graph_prior_str, edges_per_node=2):
 
 
 def make_linear_gaussian_model(*, key, n_vars=20, graph_prior_str='sf', 
-    obs_noise=0.1, mean_edge=0.0, sig_edge=1.0, min_edge=0.5, n_observations=100):
+    obs_noise=0.1, mean_edge=0.0, sig_edge=1.0, min_edge=0.5, n_observations=100, mean_distr = 0):
     """
     Samples a synthetic linear Gaussian BN instance 
 
@@ -173,7 +174,7 @@ def make_linear_gaussian_model(*, key, n_vars=20, graph_prior_str='sf',
         key=subk, n_vars=n_vars,
         graph_dist=graph_dist,
         generative_model=generative_model,
-        n_observations=n_observations)
+        n_observations=n_observations, mean_distr = mean_distr)
 
     return data, inference_model
 
